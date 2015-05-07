@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="mapDataA">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>The world factbook as colored maps</title>
+    <!-- Bootstrap -->
+<!--    <link href="css/bootstrap.min.css" rel="stylesheet">
+-->
+<!-- Latest compiled and minified CSS -->
+<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"> -->
+<link rel="stylesheet" href="css/bootstrap.min.css" >
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+	
+<style>
+	body {
+  padding-top: 30px;
+  padding-bottom: 20px;
+}
+
+.navbar {
+  margin-bottom: 20px;
+}
+</style>
+
+<style>
+div.tooltip {
+    background: lightblue;
+    border:solid gray;
+    position: absolute;
+    max-width: 8em;
+    text-align:center;
+}
+
+.tooltip {
+    pointer-events:none; /*let mouse events pass through*/
+    opacity:0;
+    transition: opacity 0.3s;
+    text-shadow:0px 0px 0px gray;
+}
+
+div.tooltip {
+    padding: 0.1em;
+    background: lightyellow;
+    border:solid gray 1px;
+    position: absolute;
+    max-width: 8em;
+    text-align:center;
+}
+div.fixed {
+    position:fixed;
+}
+g.tooltip:not(.css) {
+  fill:currentColor;
+}
+g.tooltip rect {
+    fill: lightblue;
+    stroke: gray;
+}
+circle:hover + g.tooltip.css {
+  opacity:1;
+}
+svg {
+    margin:10px 20px;
+    width:calc(100% - 40px);
+    height:500px;
+    max-height:100%;
+    border: solid 1px black;
+    background-color: #222;
+    overflow:visible; 
+    /*allow tooltips to spill into margins */
+}
+button{
+  display:block;
+  margin: 0 auto 20px;
+  padding: 0.5em;
+  box-shadow: 0 0 2px 2px navy;
+}
+
+h1{
+  text-align:center;
+
+}
+body {
+  max-width: 40em;
+  margin-left:auto;
+  margin-right:auto;
+  background: lightyellow;
+}
+p, dl {
+  margin: 0.5em 1.5em;
+}
+dt {
+  font-weight:bold;
+  display:run-in;
+  padding-right:1em;
+}
+</style>
+
+
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+	
+  </head>
+  <body>
+<!--
+		<div ng-controller="StoreController as store">
+		  <h1>{{store.product.name}}</h1>
+
+		  <h1>{{store.product.name}}</h1>
+		  <h3>{{a.country}};<h3>
+		  <table class="table" data-toggle="table">
+		  <tbody>
+		  
+		  <tr ng-repeat="row in store.data.res"><td>{{row.country}} </td><td>{{row.value}}</td></tr>
+ </tbody>		 
+		 </table>
+
+		 <span>
+		<div ng-controller="StaticData as data">
+		<span>
+		 <font ng-repeat="color in data.colors" color="{{color}}">&#9608;</font>
+		 </span>
+		</div>
+  <button ng-show={{store.product.button}}>Click me </button>
+  		</div>
+
+		<div ng-controller="StaticData as data">
+		  <table class="table" data-toggle="table">
+		  <tbody>
+		  
+		  <tr ng-repeat="data in data.countries track by $index"><td>{{data}} </td><td>{{data}}</td></tr>
+ </tbody>		 
+		 </table>
+-->
+
+
+		
+  <script type="text/JavaScript" src="angular.min.js"></script>
+  <script type="text/JavaScript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular-route.js"></script>
+  <script type="text/javascript" src="app.js"></script>
+
+<!--  <script src="jquery-ui-1.11.4.custom/jquery-ui.js"></script>
+  <script src="http://jqueryui.com/code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+-->
+ <!-- <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+-->
+  
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">The world factbook as colored maps</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+	        <li><a href="#/fieldtopn/2112">Top/Bottom 10</a></li>        		
+		    <li><a href="#/fields">Fields</a></li>
+            <li><a href="#/about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+	
+			<div class="mouse tooltip" id='HTMLmouseTip'>Mouse-tracking HTML Tip</div>
+
+
+	
+    <div class="container">
+     <!-- <div class="starter-template">  -->
+      <!--  <h1 id="FIELDTITLE">Bootstrap starter template </h1>
+        <p class="lead" id="description">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
+       -->
+
+		
+		<div ng-view class="starter-template">
+           No view loaded
+		</div>
+
+		<script>
+		 function svgclick(sArg) { alert(sArg); }
+		</script>
+
+	<!--
+     <object data="svg_2018.svg" type="image/svg+xml" id="alphasvg" style="width:300px;height:300px" width="300px" height="300px"></object>
+ 
+	<embed  name="E" id="E" src="svg_2018.svg" width="500px"></embed>
+	
+     <object id="obj" data="svg_2018.svg" type="image/svg+xml" width="500px"></object>
+	 
+	<img  id="I" src="svg_2018.svg" width="500px"></img>
+		-->	
+		<script>
+		
+function getFileSync(sFn) {
+var http = new XMLHttpRequest();
+http.open("GET",sFn,false);
+ http.send();
+	//console.log(http.responseText);
+	return  JSON.parse(http.responseText);
+}
+
+//var oFields = getFileSync("fieldLabels");
+		</script>
+	
+  <!--  <script src="//cdnjs.cloudflare.com/ajax/libs/js-signals/0.8.1/js-signals.min.js"></script>
+   <script src="hasher/hasher.min.js"></script>
+    <div id="results"></div>
+    <script>
+        var r = document.getElementById('results')
+        function write(x){r.innerHTML=x+'<br />'}
+        function handleChanges(newHash){
+          //  alert('The hash is ' + newHash);
+			if ( /\d+/.exec(newHash)) {
+				console.log("setNr");
+				$('#theMap')[0].src = "svg_" + newHash + ".svg";
+				$('#FIELDTITLE')[0].innerText = oFields[newHash + ".html"] && oFields[newHash + ".html"].fieldName;
+				$('#description')[0].innerText = oFields[newHash + ".html"] && oFields[newHash + ".html"].description || ""
+			}
+        }
+        hasher.changed.add(handleChanges);
+        hasher.init();
+      //  hasher.setHash('Foo');
+      //  setTimeout(function(){hasher.setHash('Bar')},2000)
+      //  setTimeout(function(){hasher.setHash('Baz')},4000)
+    </script>
+	
+
+		<div ng-controller="StaticData as data">
+		<span>
+		 <font ng-repeat="color in data.colors" color="{{color}}">&#9608;</font>
+		 </span>
+		</div>
+
+<table>
+<tbody>
+
+<tr>
+<td>
+
+<div ng-controller="FieldData as data">
+<table padding="0" border="0">
+<tbody>
+
+<tr ng-repeat="color in data.colorData">
+<td style="background-color:{{color.color}}; font-color:{{color.color}}">
+<span> 
+		 <font color="{{color.color}}" size="large">&#9608;</font></span>
+</td>
+<td>
+<font size="0.2em">
+{{color.value}}
+</font>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<img id="theMap" width="100%" src="svg_2018.svg">
+</td>
+</tr>
+</tbody>
+</table>
+
+-->
+		
+<!--<img width="1200px" src="data_2018.svg"> -->
+<!-- <img width="100px" src="mapofworld2.svg">-->
+
+
+<!--
+
+      <div class="dropdown theme-dropdown clearfix">
+        <a id="dropdownMenu1" href="#" class="sr-only dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret">A</span></a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+          <li class="active" role="presentation"><a role="menuitem" tabindex="-1" href="#">Action</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Another action</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
+          <li role="presentation" class="divider"></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Separated link</a></li>
+        </ul>
+      </div>
+	<h5>
+        <span class="label label-default">Default</span>
+        <span class="label label-primary">Primary</span>
+        <span class="label label-success">Success</span>
+        <span class="label label-info">Info</span>
+        <span class="label label-warning">Warning</span>
+        <span class="label label-danger">Danger</span>
+      </h5>
+
+		</div>
+-->
+
+		<!--
+<div  ng-controller="FieldsData as staticData">
+	
+	<label>Fields </label> Filter:<input type="text" ng-model="filterText"></input></label>
+	<table border="1">
+	<thead>
+     <td>
+      <a href="#" ng-click="sortType = 'nr'; sortReverse = !sortReverse">
+         Field Nr.
+        <span ng-show="sortType == 'nr' && !sortReverse" class="fa fa-caret-down"></span>
+        <span ng-show="sortType == 'nr' && sortReverse" class="fa fa-caret-up"></span>
+      </a>
+    </td>
+	    <td>
+      <a href="#" ng-click="sortType = 'fieldName'; sortReverse = !sortReverse">
+         Field name 
+        <span ng-show="sortType == 'fieldName' && !sortReverse" class="fa fa-caret-down"></span>
+        <span ng-show="sortType == 'fieldName' && sortReverse" class="fa fa-caret-up"></span>
+      </a>
+    </td>
+	<td>
+	    <a href="#" ng-click="sortType = 'description'; sortReverse = !sortReverse">
+         description 
+        <span ng-show="sortType == 'description' && !sortReverse" class="fa fa-caret-down"></span>
+        <span ng-show="sortType == 'description' && sortReverse" class="fa fa-caret-up"></span>
+      </a>
+	</td>
+	</thead>
+	<tbody>
+	<tr ng-repeat="data in staticData.filteredFields | orderBy:sortType:sortReverse">
+	<td> {{data.nr}} </td>
+	<td align="top" style="text-align:top" > <a href="mapDataAngular.html#/field/{{data.nr}}">{{data.fieldName}}</a>
+	</td>
+	<td align="top">
+	{{data.description}}
+	</td>
+	</tr>
+	</tbody>
+	</table>
+</div>
+	
+	-->
+<!--	
+<style>
+	.custom-combobox {
+		position: relative;
+		display: inline-block;
+		width:300px;
+	}
+	.custom-combobox-toggle {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		margin-left: -1px;
+		padding: 0;
+	}
+	.custom-combobox-input {
+		margin: 0;
+		width:280px;
+		padding: 5px 10px;
+	}
+	</style>
+
+
+<div class="ui-widget" ng-controller="StaticData as staticData">
+	<label>Choose a field: </label>
+	<select id="combobox" style="width:100%" >
+		<option value="">Select one...</option>
+		<option ng-repeat="data in staticData.fields" value="{{data.nr}}" >{{data.nr}} + {{data.fieldName}} + {{data.description}} </option>
+		<option value="ActionScript">ActionScript</option>
+		<option value="AppleScript">AppleScript</option>
+		<option value="Asp">Asp</option>
+		<option value="BASIC">BASIC</option>
+		<option value="C">C</option>
+		<option value="C++">C++</option>
+		<option value="Clojure">Clojure</option>
+		<option value="COBOL">COBOL</option>
+		<option value="ColdFusion">ColdFusion</option>
+		<option value="Erlang">Erlang</option>
+		<option value="Fortran">Fortran</option>
+		<option value="Groovy">Groovy</option>
+		<option value="Haskell">Haskell</option>
+		<option value="Java">Java</option>
+		<option value="JavaScript">JavaScript</option>
+		<option value="Lisp">Lisp</option>
+		<option value="Perl">Perl</option>
+		<option value="PHP">PHP</option>
+		<option value="Python">Python</option>
+		<option value="Ruby">Ruby</option>
+		<option value="Scala">Scala</option>
+		<option value="Scheme">Scheme</option>
+	</select>
+</div>
+	
+<div class="ui-widget" ng-controller="StaticData as staticData">
+	<label>Your preferred country: </label>
+	<select id="combobox">
+		<option value="">Select one...</option>
+		<option ng-repeat="data in staticData.countries">{{data}}</option>
+		<option value="ActionScript">ActionScript</option>
+		<option value="AppleScript">AppleScript</option>
+		<option value="Asp">Asp</option>
+		<option value="BASIC">BASIC</option>
+		<option value="C">C</option>
+		<option value="C++">C++</option>
+		<option value="Clojure">Clojure</option>
+		<option value="COBOL">COBOL</option>
+		<option value="ColdFusion">ColdFusion</option>
+		<option value="Erlang">Erlang</option>
+		<option value="Fortran">Fortran</option>
+		<option value="Groovy">Groovy</option>
+		<option value="Haskell">Haskell</option>
+		<option value="Java">Java</option>
+		<option value="JavaScript">JavaScript</option>
+		<option value="Lisp">Lisp</option>
+		<option value="Perl">Perl</option>
+		<option value="PHP">PHP</option>
+		<option value="Python">Python</option>
+		<option value="Ruby">Ruby</option>
+		<option value="Scala">Scala</option>
+		<option value="Scheme">Scheme</option>
+	</select>
+</div>
+-->
+    </div><!-- /.container -->
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+  <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+	<script type="text/javascript" src="jquery.svg.package-1.5.0/jquery.svgdom.js"></script>
+  
+  <link rel="stylesheet" type="text/css" href="jquery.svg.package-1.5.0/jquery.svg.css"> 
+<script type="text/javascript" src="/jquery.svg.package-1.5.0/jquery.svg.js"></script>
+  
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+<!--    <script src="js/bootstrap.min.js"></script> -->
+
+<!-- Optional theme -->
+<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+-->
+<!-- Latest compiled and minified JavaScript -->
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+	<script>
+	(function( $ ) {
+		$.widget( "custom.combobox", {
+			_create: function() {
+				this.wrapper = $( "<span>" )
+					.addClass( "custom-combobox" )
+					.insertAfter( this.element );
+
+				this.element.hide();
+				this._createAutocomplete();
+				this._createShowAllButton();
+			},
+
+			_createAutocomplete: function() {
+				var selected = this.element.children( ":selected" ),
+					value = selected.val() ? selected.text() : "";
+
+				this.input = $( "<input>" )
+					.appendTo( this.wrapper )
+					.val( value )
+					.attr( "title", "" )
+					.addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+					.autocomplete({
+						delay: 0,
+						minLength: 0,
+						source: $.proxy( this, "_source" )
+					})
+					.tooltip({
+						tooltipClass: "ui-state-highlight"
+					});
+
+				this._on( this.input, {
+					autocompleteselect: function( event, ui ) {
+						ui.item.option.selected = true;
+						this._trigger( "select", event, {
+							item: ui.item.option
+						});
+					},
+
+					autocompletechange: "_removeIfInvalid"
+				});
+			},
+
+			_createShowAllButton: function() {
+				var input = this.input,
+					wasOpen = false;
+
+				$( "<a>" )
+					.attr( "tabIndex", -1 )
+					.attr( "title", "Show All Items" )
+					.tooltip()
+					.appendTo( this.wrapper )
+					.button({
+						icons: {
+							primary: "ui-icon-triangle-1-s"
+						},
+						text: false
+					})
+					.removeClass( "ui-corner-all" )
+					.addClass( "custom-combobox-toggle ui-corner-right" )
+					.mousedown(function() {
+						wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+					})
+					.click(function() {
+						input.focus();
+
+						// Close if already visible
+						if ( wasOpen ) {
+							return;
+						}
+
+						// Pass empty string as value to search for, displaying all results
+						input.autocomplete( "search", "" );
+					});
+			},
+
+			_source: function( request, response ) {
+				var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+				response( this.element.children( "option" ).map(function() {
+					var text = $( this ).text();
+					if ( this.value && ( !request.term || matcher.test(text) ) )
+						return {
+							label: text,
+							value: text,
+							option: this
+						};
+				}) );
+			},
+
+			_removeIfInvalid: function( event, ui ) {
+
+				// Selected an item, nothing to do
+				if ( ui.item ) {
+					return;
+				}
+
+				// Search for a match (case-insensitive)
+				var value = this.input.val(),
+					valueLowerCase = value.toLowerCase(),
+					valid = false;
+				this.element.children( "option" ).each(function() {
+					if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+						this.selected = valid = true;
+						return false;
+					}
+				});
+
+				// Found a match, nothing to do
+				if ( valid ) {
+					return;
+				}
+
+				// Remove invalid value
+				this.input
+					.val( "" )
+					.attr( "title", value + " didn't match any item" )
+					.tooltip( "open" );
+				this.element.val( "" );
+				this._delay(function() {
+					this.input.tooltip( "close" ).attr( "title", "" );
+				}, 2500 );
+				this.input.autocomplete( "instance" ).term = "";
+			},
+
+			_destroy: function() {
+				this.wrapper.remove();
+				this.element.show();
+			}
+		});
+	})( jQuery );
+
+	$(function() {
+		$( "#combobox" ).combobox();
+		$( "#toggle" ).click(function() {
+			$( "#combobox" ).toggle();
+		});
+	});
+	</script>
+
+	<!--
+<script>
+function getPosition(element) {
+    var xPosition = 0;
+    var yPosition = 0;
+  
+    while(element) {
+        xPosition += (element.offsetLeft - 0 * element.scrollLeft + element.clientLeft);
+        yPosition += (element.offsetTop - 0 * element.scrollTop + element.clientTop);
+		console.log('offsetTop' + element.offsetTop  + " - scrollTop " + element.scrollTop + " " + element.clientTop );
+        element = element.offsetParent;
+    }
+    return { x: xPosition, y: yPosition };
+}
+
+
+//var tooltip = d3.selectAll(".tooltip:not(.css)");
+var HTMLmouseTip = $('#HTMLmouseTip'); 
+
+var onMouseMove = function(sCountry, ev) {
+        
+		var u = getPosition($('#obj').get()[0]);		
+console.log('mouse move fctx sCountry '+  sCountry + "  y " + (u.y) + " pageY" + ev.pageY);
+
+      HTMLmouseTip.get()[0]
+            .style.left =   Math.max(0, u.x + ev.pageX - 150) + "px";
+        HTMLmouseTip.get()[0].style.top = (u.y + ev.pageY + 20) + "px";
+        HTMLmouseTip.get()[0].style.opacity = "60";
+		HTMLmouseTip.get()[0].innerText = sCountry + " Country";
+		
+};
+
+var onMouseOut = function() {
+console.log('mouse out fct');
+        HTMLmouseTip.get()[0].style.opacity = "0";
+};
+
+$('#obj')[0].addEventListener('load', function() {
+        console.log("attach events");
+		$('#Germany',$('#obj').get()[0].contentDocument).on("mousemove", function() {
+		   console.log('Mouse move over germany via load');
+		});
+		['Germany', 'Iraq', 'Canada', 'France', 'Russia'].forEach(function(sCountry) {
+			aObj = $('#' + sCountry, $('#obj').get()[0].contentDocument);
+			if( aObj.length) {
+				aObj.on('mousemove', onMouseMove.bind(this,sCountry));
+				aObj.on('mouseout', onMouseOut);
+			}		
+		});
+		$('#Iraq',$('#obj').get()[0].contentDocument).on("mousemove", onMouseMove);
+		$('#Iraq',$('#obj').get()[0].contentDocument).on("mouseout", onMouseOut);
+});
+    
+
+ $('#MOUSEOVERDIV').on("mousemove", function () {
+        console.log('mousover 2 ');
+        /***** Positioning a tooltip using mouse coordinates *****/ 
+      
+        /* The code is shorter, but it runs every time
+           the mouse moves, so it could slow down other
+           processes or animation. */
+        
+        /***** For an SVG tooltip *****/ 
+       
+  //      var mouseCoords = d3.mouse(
+  //          SVGmouseTip.node().parentElement);
+        //the d3.mouse() function calculates the mouse
+        //position relative to an SVG Element, in that 
+        //element's coordinate system 
+        //(after transform or viewBox attributes).
+        
+        //Because we're using the coordinates to position
+        //the SVG tooltip, we want the coordinates to be
+        //with respect to that element's parent.
+        //SVGmouseTip.node() accesses the (first and only)
+        //selected element from the saved d3 selection object.
+        
+  //      SVGmouseTip
+  //          .attr("transform", "translate("
+  //                + (mouseCoords[0]-10) + "," 
+  //                + (mouseCoords[1] - 10) + ")");
+        
+        /***** For an HTML tooltip *****/ 
+      
+        //mouse coordinates relative to the page as a whole
+        //can be accessed directly from the click event object
+        //(which d3 stores as d3.event)
+		var x = $('#obj').get()[0].pageX + arguments[0].pageX; 
+console.log('mouse move fctx'+ arguments[0].pageX + "  x " + " " +arguments[0].pageY );
+        HTMLmouseTip.get()[0]
+            .style.left = Math.max(0, arguments[0].screenX - 150) + "px";
+        HTMLmouseTip.get()[0].style.top = (arguments[0].screenY + 20) + "px";
+        HTMLmouseTip.get()[0].style.opacity = "60";
+    })
+    .on("mouseout", function () {
+	
+        HTMLmouseTip.get()[0].style.opacity = "0";
+		console.log("mouse out");
+		$('#Germany',$('#obj').get()[0].contentDocument).on("mousemove", function() {
+		console.log('Mouse move over germany');
+		});
+		$('#Iraq',$('#obj').get()[0].contentDocument).on("mousemove", function() {
+		console.log('Mouse move over irak');
+		});
+    });
+	
+	$('#SVGHost').svg({ loadURL : 'x1.svg' }); 
+	
+	//{
+//	loadURL : 'svg_2172.svg',
+//	onload : function() {
+//		$('#Germany',$('#SVGHost').get()[0].contentDocument).on("mousemove", function() {
+//		console.log('Mouse move over germany');
+//		});
+//		$('#Irak',$('#SVGHost').get()[0].contentDocument).on("mousemove", function() {
+//		console.log('Mouse move over irak');
+//		});
+    
+//	}
+//	})
+	
+	console.log('loaded script from colormap');
+	</script>
+
+	-->
+
+
+</body>
+</html>

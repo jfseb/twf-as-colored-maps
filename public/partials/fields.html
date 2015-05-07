@@ -1,0 +1,39 @@
+<div>
+  <h1 id="fields">Fields</h1>
+	<label>Fields </label> Filter:<input type="text" ng-model="filterText"></input></label>
+	<table border="1">
+	<thead>
+     <td>
+      <a href="#" ng-click="sortType = 'nr'; sortReverse = !sortReverse">
+         Field Nr.
+        <span ng-show="sortType == 'nr' && !sortReverse" class="fa fa-caret-down"></span>
+        <span ng-show="sortType == 'nr' && sortReverse" class="fa fa-caret-up"></span>
+      </a>
+    </td>
+	    <td>
+      <a href="#" ng-click="sortType = 'fieldName'; sortReverse = !sortReverse">
+         Field name 
+        <span ng-show="sortType == 'fieldName' && !sortReverse" class="fa fa-caret-down"></span>
+        <span ng-show="sortType == 'fieldName' && sortReverse" class="fa fa-caret-up"></span>
+      </a>
+    </td>
+	<td>
+	    <a href="#" ng-click="sortType = 'description'; sortReverse = !sortReverse">
+         description 
+        <span ng-show="sortType == 'description' && !sortReverse" class="fa fa-caret-down"></span>
+        <span ng-show="sortType == 'description' && sortReverse" class="fa fa-caret-up"></span>
+      </a>
+	</td>
+	</thead>
+	<tbody>
+	<tr ng-repeat="data in filteredFields | orderBy:sortType:sortReverse">
+	<td> {{data.nr}} </td>
+	<td align="top" style="text-align:top" > <a href="#/fieldmap/{{data.nr}}">{{data.fieldName}}</a>
+	</td>
+	<td align="top">
+	{{data.description}}
+	</td>
+	</tr>
+	</tbody>
+	</table>
+</div>

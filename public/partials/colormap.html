@@ -1,0 +1,59 @@
+<div>
+  <h1 id="FIELDTITLE">{{field.fieldName}}</h1>
+   <!--     <p class="lead" id="description">
+		{{field.description}}</p>
+ -->
+<!-- to be instantiated with FieldData -->
+{{field.nr}} {{field.fieldName}} {{field.description}}
+
+<h5>
+<a class="label label-primary" href="https://www.cia.gov/Library/publications/the-world-factbook/fields/{{field.nr}}.html">original data</a>
+<a class="label label-default" href="#/fieldtopn/{{field.nr}}"> top / bottom 10</a>
+        <!-- success info warning danger -->
+</h5>
+
+
+<!--
+<a class="label label-success" href="https://www.cia.gov/Library/publications/the-world-factbook/fields/{{field.nr}}.html">original data</a>
+        <span class="label label-default">Default</span>
+<!--        <span class="label label-success">Success</span>
+         <span class="label label-info">Info</span>
+        <span class="label label-warning">Warning</span>
+        <span class="label label-danger">Danger</span>
+-->
+
+
+<table>
+<tbody>
+<tr>
+<td>
+<div>
+<table padding="0" border="0" style="font-size:8px">
+<tbody>
+<tr ng-repeat="color in colorData">
+<td style="background-color:{{color.color}}; font-color:{{color.color}}">
+<span><font color="{{color.color}}" size="large">&#9608;&#9608;&#9608;</font></span>
+</td>
+<td>
+<font size="0.4em">
+{{color.value}}
+</font>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td style="width:100%">
+  <object id="svgobj" data="svg_{{fieldIndex}}.svg" width="100%" height="100% "type="image/svg+xml">
+  Your browser does not support SVG?
+  <img src="noimg.jpg" />
+</object> 
+<!--
+<img id="theMap" width="100%" src="svg_{{fieldIndex}}.svg">
+-->
+</td>
+</tr>
+</tbody>
+</table>
+</div>

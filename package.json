@@ -1,0 +1,41 @@
+{
+  "name": "jfseb-twf-as-colored-maps",
+  "version": "0.1.0",
+  "description": "expose the world factbook data as coloured maps",
+  "main": "server.js",
+  "dependencies": {
+     "express" : "~4.9.x",
+	 "fs" :"~0.0.2",
+	 "http" : "~0.0.x",
+	 "emptygif" : "~0.1.0",
+	 "line-by-line" : "~0.1.3",
+	 "xml2js" : "~0.4.6",
+	 "socket.io" : "~1.3.5",
+	 "request" : "2.55.0"
+  }, 
+  "devDependencies": {
+    "chai": "^2.2.0",
+    "mocha": "^2.2.4"
+  },
+  "scripts": {
+    "test": "node node_modules/mocha/bin/mocha --reporter spec",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jfseb/twf-as-colored-maps.git"
+  },
+  "keywords": [
+    "rgb",
+	"heroku",
+	"colored maps",
+    "the world factbook",
+    "coloring"
+  ],
+  "author": "jfsebpublic@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jfseb/twf-as-colored-maps/issues"
+  },
+  "homepage": "https://github.com/jfseb/jfseb-rgb-colorgradient"
+}

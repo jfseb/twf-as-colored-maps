@@ -1,0 +1,5 @@
+1      (GEOCODE,CODEDESC,NUMFACT,TEXT,FIELDDESC)          values                                            
+
+2      Insert into FACTBOOK.RO_2092 (GEOCODE,CODEDESC,NUMFACT,TEXT,FIELDDESC) values ('BK','Bosnia and Herzegovina',' -0.80','2014 est.','Inflation rate (consumer prices)');
+ Insert into FACTBOOK.RO_2092 (GEOCODE,CODEDESC,NUMFACT,TEXT,FIELDDESC) values ('LS','Liechtenstein',' -0.70','2012','Inflation rate (consumer prices)');
+

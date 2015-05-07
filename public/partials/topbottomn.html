@@ -1,0 +1,47 @@
+<div>
+ <h1 id="FIELDTITLE">{{field.fieldName}}</h1>
+{{field.description}}
+
+	<h5>
+<a class="label label-primary" href="https://www.cia.gov/Library/publications/the-world-factbook/fields/{{field.nr}}.html">original data</a>
+
+  <a class="label label-default" href="#/fieldmap/{{field.nr}}">as colored map</a>
+        <!-- success info warning dange -->
+		 </h5>
+
+<table padding="0.2em" border="1" style="width:100%;font-size:normal">
+<tbody>
+<tr>
+<th colspan="2">
+Top 10
+</th>
+</tr>
+<tr ng-repeat="data in rawData | limitTo:10">
+<td>
+{{data.country}}
+</td>
+<td>
+{{data.valueStr}}
+</td>
+</tr>
+<tr>
+<th colspan="2">
+Bottom 10
+</th>
+</tr>
+<tr ng-repeat="data in rawData | limitTo:-10">
+<td>
+{{data.country}}
+</td>
+<td>
+{{data.valueStr}}
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
